@@ -133,3 +133,4 @@ footer{padding:46px 4% 28px}
   .hero-copy p{margin:0;max-width:310px}
   .hero-copy .hero-link{margin:18px 0 0}
 }
+.hero-progress{width:100%;transform:scaleX(0);transform-origin:left center;will-change:transform}
