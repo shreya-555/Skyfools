@@ -9,8 +9,8 @@ Independent café concept, researched against The Lovefools in Bandra. React 19,
 ## Content
 
 - Edit `src/data.js` for the 15 researched menu names, public listing prices, source links and review summaries.
-- All 300 original JPEG frames from the supplied archive are retained unchanged in `public/frames`, numbered 001–300.
-- The canvas follows scroll position with easing, draws the nearest loaded frame, preloads adjacent frames, and keeps a bounded decoded-image cache. It uses contain scaling to preserve the complete 16:9 frame, including letterboxing on portrait screens.
+- All 240 original JPEG frames from the latest supplied archive are retained unchanged in `public/frames`, numbered 001–240.
+- The canvas follows scroll position directly, draws the nearest loaded frame, preloads adjacent frames, and keeps a bounded decoded-image cache. It uses contain scaling to preserve the complete 16:9 frame, including letterboxing on portrait screens.
 - Reduced motion disables automatic carousel/review motion and uses a still hero.
 - Native dialog provides focus trapping, Escape dismissal and restored focus; backdrop clicks also close it.
 - Menu imagery now uses licensed real photography, clearly labelled illustrative and not actual Lovefools dishes. Photo metadata and licensing links live in src/photos.js. Gallery and story use clearly labelled supplied concept artwork. No unlicensed restaurant photos or official branding are reproduced.
@@ -22,5 +22,5 @@ Independent café concept, researched against The Lovefools in Bandra. React 19,
 Production build passed. Browser checks covered scroll frame movement, desktop layout, menu filtering, product modal opening, Escape dismissal, gallery lightbox and a 390px-wide responsive layout. Map and outgoing third-party destinations remain dependent on external services.
 
 ## Revised experience
-The hero uses a 900svh desktop / 750svh mobile scroll journey, revealing the left-aligned name only after frame 300. The last 18% holds the final frame. The canvas now renders only on scroll and frame readiness, loads at most four nearby frames concurrently, and keeps a bounded decoded cache. `public/sequence` has 1280-pixel WebP frames and `public/sequence-mobile` has 960-pixel frames for smaller screens; the original JPEGs remain untouched in `public/frames`. Run `python scripts/optimize-frames.py` and `python scripts/optimize-frames.py --mobile` to regenerate them. Fifteen distinct sourced review summaries move in an accessible, pausable horizontal carousel. Spacing is tighter and supporting typography is larger. The footer includes location, contact, booking, navigation and asset credits.
+The hero uses a 900svh desktop / 750svh mobile scroll journey, revealing the left-aligned name only after frame 240. The last 18% holds the final frame. The canvas renders only on scroll and frame readiness, loads at most four nearby frames concurrently, and keeps a bounded decoded cache. `public/sequence` has 1280-pixel WebP frames and `public/sequence-mobile` has 960-pixel frames for smaller screens; the new original JPEGs remain untouched in `public/frames`. Run `python scripts/import-walkthrough.py path/to/frames.zip`, then `python scripts/optimize-frames.py` and `python scripts/optimize-frames.py --mobile` to regenerate them. Fifteen distinct sourced review summaries move in an accessible, pausable horizontal carousel. Spacing is tighter and supporting typography is larger. The footer includes location, contact, booking, navigation and asset credits.
 

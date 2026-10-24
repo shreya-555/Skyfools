@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
 import {ArrowDown, ArrowUpRight} from 'lucide-react';
 
-const LAST_FRAME = 300;
+const LAST_FRAME = 240;
 const WALKTHROUGH_END = .82;
 const sequenceFrame = n => `/${innerWidth<700?'sequence-mobile':'sequence'}/frame-${String(n).padStart(3, '0')}.webp`;
 
@@ -98,7 +98,7 @@ export default function Hero({onComplete}) {
   },[reduced,onComplete]);
   return <section id="home" className="hero-track" ref={root}>
     <div className={`hero ${complete?'journey-complete':'journey-active'}`}>
-      <canvas ref={canvas} aria-label="Scroll-controlled café walkthrough using the 300 original supplied frames"/>
+      <canvas ref={canvas} aria-label="Scroll-controlled café walkthrough using the 240 original supplied frames"/>
       <div className="hero-shade"/>
       <div className="hero-copy" aria-hidden={!complete} inert={!complete}>
         <span className="eyebrow">BANDRA WEST · MUMBAI</span>
