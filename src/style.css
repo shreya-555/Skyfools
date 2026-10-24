@@ -120,3 +120,16 @@ footer{padding:46px 4% 28px}
   footer{padding:38px 5% 25px}.footer-top .wordmark{font-size:42px}.footer-top p{font-size:23px}.footer-top{padding-bottom:25px}.back-top{font-size:13px;margin-top:24px}.footer-columns{grid-template-columns:1fr 1fr;gap:24px 20px;padding:25px 0}.footer-columns>div:first-child{grid-column:span 2}.footer-columns h3{font-size:14px;margin-bottom:14px}.footer-columns p,.footer-columns address,.footer-columns a{font-size:13px;line-height:1.7}.footer-columns>div:last-child{grid-column:span 2}.footer-bottom{font-size:10px;gap:10px}.credits{font-size:12px}.credits ul{columns:1}
 }
 @media(prefers-reduced-motion:reduce){.hero-track{height:100svh}.hero-copy{transition:none}.review-track{will-change:auto}}
+/* Keep the closing title within the left third of the café frame. */
+.hero-copy{left:7%;right:auto;top:50%;width:min(620px,49vw);text-align:left;transform:translateY(-44%)}
+.journey-complete .hero-copy{transform:translateY(-50%)}
+.hero h1{font-size:clamp(68px,7.6vw,116px);line-height:1.02;letter-spacing:-4px}
+.hero h1 em{display:block}
+.hero-copy p{max-width:420px}
+.hero-copy .hero-link{margin:25px 0 0}
+@media(max-width:700px){
+  .hero-copy{left:6%;width:88%;top:50%;text-align:left}
+  .hero h1{font-size:clamp(57px,13vw,80px);letter-spacing:-2.5px}
+  .hero-copy p{margin:0;max-width:310px}
+  .hero-copy .hero-link{margin:18px 0 0}
+}

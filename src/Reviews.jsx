@@ -8,8 +8,11 @@ export default function ReviewSection(){
   const [paused,setPaused]=useState(false);
   const reduced=useReducedMotion();
   useEffect(()=>{
-    let raf,last=performance.now();
+    let raf,last=performance.now(),visible=false;
+    const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;},{rootMargin:'200px'});
+    observer.observe(track.current.parentElement);
     const tick=t=>{
+      if(!visible||document.hidden){last=t;raf=requestAnimationFrame(tick);return;}
       const el=track.current, step=el.firstElementChild.getBoundingClientRect().width+22;
       const total=step*reviews.length;
       if(!paused&&!reduced&&!hold.current&&!drag.current) position.current+=Math.min(t-last,40)*.022;
@@ -19,7 +22,7 @@ export default function ReviewSection(){
       raf=requestAnimationFrame(tick);
     };
     raf=requestAnimationFrame(tick);
-    return()=>cancelAnimationFrame(raf);
+    return()=>{cancelAnimationFrame(raf);observer.disconnect();};
   },[paused,reduced]);
   const move=dir=>position.current+=dir*(track.current.firstElementChild.getBoundingClientRect().width+22);
   return <section className="reviews section" id="reviews">
