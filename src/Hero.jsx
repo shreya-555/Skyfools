@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
-import {ArrowDown, ArrowUpRight} from 'lucide-react';
+import {ArrowDown} from 'lucide-react';
 
 const LAST_FRAME = 240;
 const FRAMES_PER_SHEET = 12;
@@ -179,10 +179,9 @@ export default function Hero({onComplete}) {
       <canvas ref={canvas} aria-label="Scroll-controlled café walkthrough using the 240 original supplied frames"/>
       <div className="hero-shade"/>
       <div className="hero-copy" aria-hidden={!complete} inert={!complete}>
-        <span className="eyebrow">BANDRA WEST · MUMBAI</span>
+        <span className="eyebrow">MALAD EAST · MUMBAI</span>
         <h1>The <em>Skyfools.</em></h1>
         <p>Good coffee. Curious plates. Stay a little longer.</p>
-        <a className="hero-link" href="#menu">Find your favourite <ArrowUpRight size={19}/></a>
       </div>
       <div className="hero-bottom"><span>{complete ? 'YOU’VE ARRIVED' : 'TAKE YOUR TIME'}</span>
         <div className="scroll-cue"><span>{complete ? 'SCROLL TO THE MENU' : 'SCROLL TO STEP INSIDE'}</span><ArrowDown size={19}/></div>

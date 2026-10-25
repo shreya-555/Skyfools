@@ -61,6 +61,10 @@
 .book-footer{background:#343d2d;color:#e9ecdc;padding:27px 4%;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .book-footer>span{font-size:10px;letter-spacing:1.3px}
 .book-footer>a:last-child{font-size:14px}
+.book-embedded{background:transparent;min-height:0}
+.book-embedded .book-main{padding:0;max-width:none}
+.book-embedded .book-layout{max-width:1200px}
+.book-embedded .book-tools select{background:transparent}
 @media(max-width:1000px){.book-page{padding:30px 28px 22px}.book-cover{padding:42px 36px}.book-item{font-size:12px}.book-stage{min-height:505px}}
 @media(max-width:760px){.book-nav{height:68px;padding:0 5%}.book-brand{font-size:26px}.book-nav nav>a:not(.book-home){display:none}.book-home{font-size:12px}.book-main{padding:38px 5% 42px}.book-intro{display:block;margin-bottom:25px}.book-intro h1{font-size:46px}.book-intro>p{margin-top:15px;font-size:14px}.book-tools{flex-wrap:wrap;gap:8px 14px}.book-tools>span{width:100%;margin:0}.book-stage{height:620px;min-height:0;max-width:480px;margin:auto}.book-pages{grid-template-columns:1fr}.book-pages:after{display:none}.book-page{padding:32px 28px 24px}.book-cover{padding:42px}.book-cover h2,.book-end h2{font-size:64px}.book-item{font-size:14px}.turn-leaf.single{left:0;width:100%}.book-footer{flex-wrap:wrap}.book-footer>span{order:3;width:100%;font-size:9px}.book-source{font-size:12px}}
 @media(max-width:420px){.book-stage{height:590px}.book-page{padding:25px 21px 20px}.book-cover{padding:37px}.book-heading{margin-top:20px}.book-heading h2{font-size:34px}.book-item{font-size:12px}.book-page-bottom{font-size:8px}}

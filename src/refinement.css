@@ -1,6 +1,6 @@
 /* Editorial pacing for the home experience. */
 .section{padding-top:70px;padding-bottom:70px}
-.section-title{align-items:end;gap:7%;margin-bottom:30px;padding-bottom:24px;border-bottom:1px solid #777b6838}
+.section-title{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,380px);align-items:end;column-gap:7%;margin-bottom:30px;padding-bottom:24px;border-bottom:1px solid #777b6838}
 .section h2{font-size:clamp(43px,4.35vw,62px);letter-spacing:-2.4px;line-height:1.08;margin-top:11px;max-width:750px}
 .eyebrow{font-size:11px;letter-spacing:1.6px;font-weight:600;color:#747967}
 .section-intro{font-size:15px;line-height:1.65;max-width:370px;color:#666d5d}
@@ -12,6 +12,9 @@
 .menu-card p{min-height:0;max-width:95%;margin:9px 0 13px;font-size:14px;line-height:1.55}
 .view-details{font-size:12px;letter-spacing:.15px;text-transform:none}
 .source-note{margin-top:28px;max-width:760px;font-size:12px}
+.book-home-section{background:#f0efe6}
+.book-home-section .section-title{margin-bottom:27px}
+.book-home-section .book-tools{margin-bottom:17px}
 .story{gap:6%;padding-top:72px;padding-bottom:72px}
 .story-visual>img{height:480px;border-radius:8px;object-position:center}
 .story-copy h2{font-size:clamp(43px,4.2vw,60px);line-height:1.07;letter-spacing:-2.4px;margin:12px 0 25px}
@@ -32,6 +35,8 @@
 .visit h2{font-size:clamp(43px,4.35vw,62px);margin-top:12px}
 .visit-info{margin-top:32px}
 .visit-actions{flex-wrap:wrap;gap:20px 28px}
+.visit-info{grid-template-columns:1fr 1fr}
+.visit-info p{font-size:16px;line-height:1.6}
 .map-wrap{height:440px}
 .detail-modal.review-detail{width:min(790px,90vw)}
 .review-detail-art{background:#e5e8d9;color:#87906b;font:260px/.8 'Playfair Display',Georgia,serif;display:flex;align-items:center;justify-content:center;min-height:440px}
@@ -42,4 +47,4 @@
 .review-detail .modal-copy .text-link{margin-top:6px}
 .detail-modal .modal-copy .text-link{margin-right:17px}
 @media(max-width:1000px){.section{padding-top:60px;padding-bottom:60px}.story-visual>img{height:430px}.review-words{font-size:19px}}
-@media(max-width:700px){.section{padding:46px 5%}.section-title{display:block;margin-bottom:24px;padding-bottom:20px}.section h2,.reviews h2,.story-copy h2,.visit h2{font-size:43px;letter-spacing:-1.7px}.section-intro{margin-top:17px;font-size:15px}.menu-card h3{font-size:26px}.menu-card p{font-size:14px}.story{gap:28px}.story-visual{margin-right:0}.story-visual>img{height:315px;border-radius:8px}.story-copy h2{margin:11px 0 20px}.gallery-grid{gap:10px}.review-card{min-height:275px}.review-words{font-size:22px}.review-detail-art{min-height:155px;font-size:150px}.review-detail .modal-copy p:not(.fine){font-size:21px}.visit{gap:32px}.visit-actions{gap:14px 22px}.map-wrap{height:340px}}
+@media(max-width:700px){.section{padding:46px 5%}.section-title{display:block;margin-bottom:24px;padding-bottom:20px}.section h2,.reviews h2,.story-copy h2,.visit h2{font-size:43px;letter-spacing:-1.7px}.section-intro{margin-top:17px;font-size:15px}.menu-card h3{font-size:26px}.menu-card p{font-size:14px}.story{gap:28px}.story-visual{margin-right:0}.story-visual>img{height:315px;border-radius:8px}.story-copy h2{margin:11px 0 20px}.gallery-grid{gap:10px}.review-card{min-height:275px}.review-words{font-size:22px}.review-detail-art{min-height:155px;font-size:150px}.review-detail .modal-copy p:not(.fine){font-size:21px}.visit{gap:32px}.visit-info p{font-size:14px}.visit-actions{gap:14px 22px}.map-wrap{height:340px}}

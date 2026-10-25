@@ -732,7 +732,7 @@ export const bookCategories = [
     "title": "Dinner Menu",
     "items": [
       [
-        "Lovefools 10 Course",
+        "10 Course",
         3482
       ],
       [
@@ -744,11 +744,11 @@ export const bookCategories = [
         3000
       ],
       [
-        "Lovefools 17 Course",
+        "17 Course",
         5804
       ],
       [
-        "Lovefools 6 Course",
+        "6 Course",
         2232
       ],
       [
@@ -780,7 +780,7 @@ export const bookCategories = [
         3080
       ],
       [
-        "Lovefools 8 Course",
+        "8 Course",
         2813
       ]
     ]
@@ -1435,5 +1435,4 @@ export const bookCategories = [
     ]
   }
 ];
-export const bookSource = 'https://magicpin.in/Mumbai/Bandra-West/Restaurant/Lovefools/store/16aa733/delivery';
 

@@ -1,4 +1,3 @@
-// Licensed real photography. These are illustrative images, not Lovefools products.
 const pexels=(id,name,author,alt)=>({file:`/food/${name}.jpg`,url:`https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1100`,source:`https://www.pexels.com/photo/${id}/`,author,alt,license:'Pexels License',licenseUrl:'https://www.pexels.com/license/'});
 export const photos={
   coffee:{file:'/food/coffee.jpg',url:'https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=1100&q=85',source:'https://unsplash.com/photos/tA90pRfL2gM',author:'Nathan Dumlao',alt:'Real photograph of coffee with latte art',license:'Unsplash License',licenseUrl:'https://unsplash.com/license'},
