@@ -179,7 +179,7 @@ export default function Hero({onComplete}) {
       <canvas ref={canvas} aria-label="Scroll-controlled café walkthrough using the 240 original supplied frames"/>
       <div className="hero-shade"/>
       <div className="hero-copy" aria-hidden={!complete} inert={!complete}>
-        <span className="eyebrow">MALAD EAST · MUMBAI</span>
+        <span className="eyebrow">BANDRA WEST · MUMBAI</span>
         <h1>The <em>Skyfools.</em></h1>
         <p>Good coffee. Curious plates. Stay a little longer.</p>
       </div>
