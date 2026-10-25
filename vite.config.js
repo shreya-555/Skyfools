@@ -1,3 +1,4 @@
 import {defineConfig} from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-export default defineConfig({plugins:[tailwindcss()]});
+import {resolve} from 'node:path';
+export default defineConfig({plugins:[tailwindcss()],build:{rollupOptions:{input:{main:resolve(import.meta.dirname,'index.html'),menu:resolve(import.meta.dirname,'menu.html')}}}});
