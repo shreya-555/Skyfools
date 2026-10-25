@@ -13,8 +13,8 @@ for number in range(1, len(frames) + 1):
     original = source / f'ezgif-frame-{number:03d}.jpg'
     output = target / f'frame-{number:03d}.webp'
     with Image.open(original) as image:
-        image.thumbnail((960, 540) if mobile else (1280, 720), Image.Resampling.LANCZOS)
-        image.save(output, 'WEBP', quality=67 if mobile else 70, method=4)
+        image.thumbnail((1440, 810) if mobile else (1280, 720), Image.Resampling.LANCZOS)
+        image.save(output, 'WEBP', quality=75 if mobile else 70, method=4)
 for stale in target.glob('frame-*.webp'):
     if int(stale.stem.rsplit('-', 1)[1]) > len(frames):
         stale.unlink()

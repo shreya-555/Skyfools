@@ -28,7 +28,7 @@ export default function Hero({onComplete}) {
   useEffect(() => {
     const sheets = new Map(), detail = new Map();
     const sheetPending = new Set(), sheetFailed = new Set(), detailPending = new Set(), detailFailed = new Set();
-    const tileWidth = compact ? 320 : 480, tileHeight = compact ? 180 : 270;
+    const tileWidth = 480, tileHeight = 270;
     const ctx = canvas.current.getContext('2d', {alpha: false, desynchronized: true});
     let alive = true, raf = 0, target = reduced ? LAST_FRAME : 1, direction = 1, active = true;
     let sheetInFlight = 0, detailInFlight = 0;
@@ -36,16 +36,27 @@ export default function Hero({onComplete}) {
 
     setStatus('Preparing the walkthrough…');
     const schedule = () => { if (alive && !raf) raf = requestAnimationFrame(draw); };
+    const trimSheets = () => {
+      const focus = Math.floor((target - 1) / FRAMES_PER_SHEET);
+      const removable = [...sheets.keys()].filter(index => index !== focus)
+        .sort((a, b) => Math.abs(b - focus) - Math.abs(a - focus));
+      while (sheets.size > (compact ? 7 : 12) && removable.length) {
+        const index = removable.shift();
+        sheets.get(index).close(); sheets.delete(index);
+      }
+    };
     const loadSheet = index => {
       if (index < 0 || index >= SHEET_COUNT || sheets.has(index) || sheetPending.has(index) || sheetFailed.has(index) || sheetInFlight >= 3) return;
       sheetPending.add(index); sheetInFlight++;
       const image = new Image();
       image.decoding = 'async';
+      image.fetchPriority = index === Math.floor((target - 1) / FRAMES_PER_SHEET) ? 'high' : 'low';
       image.onload = async () => {
         try {
           const bitmap = await createImageBitmap(image);
           if (!alive) { bitmap.close(); return; }
           sheets.set(index, bitmap);
+          trimSheets();
           if (index === 0 || index === Math.floor((target - 1) / FRAMES_PER_SHEET)) setStatus('');
         } catch { sheetFailed.add(index); }
         finally { sheetPending.delete(index); sheetInFlight--; schedule(); queueSheets(); }
@@ -60,15 +71,14 @@ export default function Hero({onComplete}) {
     const queueSheets = () => {
       if (!alive || reduced || document.hidden) return;
       const focus = Math.floor((target - 1) / FRAMES_PER_SHEET);
-      for (let distance = 0; distance < SHEET_COUNT && sheetInFlight < 3; distance++) {
-        loadSheet(focus + distance);
-        if (distance) loadSheet(focus - distance);
-      }
+      const nearby = [focus, focus + direction, focus - direction,
+        focus + direction * 2, focus + direction * 3, focus + direction * 4];
+      nearby.forEach(loadSheet);
     };
     const trimDetail = () => {
       const removable = [...detail.keys()].filter(number => number !== target)
         .sort((a, b) => Math.abs(b - target) - Math.abs(a - target));
-      while (detail.size > 18 && removable.length) {
+      while (detail.size > (compact ? 12 : 18) && removable.length) {
         const number = removable.shift();
         detail.get(number).close(); detail.delete(number);
       }
@@ -78,6 +88,7 @@ export default function Hero({onComplete}) {
       detailPending.add(number); detailInFlight++;
       const image = new Image();
       image.decoding = 'async';
+      image.fetchPriority = number === target ? 'high' : 'low';
       image.onload = async () => {
         try {
           const bitmap = await createImageBitmap(image);
@@ -129,7 +140,9 @@ export default function Hero({onComplete}) {
     const draw = () => {
       raf = 0;
       const element = canvas.current;
-      const width = Math.round(element.clientWidth), height = Math.round(element.clientHeight);
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, compact ? 2.5 : 2);
+      const width = Math.round(element.clientWidth * pixelRatio);
+      const height = Math.round(element.clientHeight * pixelRatio);
       if (element.width !== width || element.height !== height) {
         element.width = width; element.height = height; lastRender = '';
       }

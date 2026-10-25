@@ -9,7 +9,7 @@ from PIL import Image
 SOURCE = Path('public/frames')
 MOBILE = '--mobile' in sys.argv
 TARGET = Path('public/sprite-mobile' if MOBILE else 'public/sprite')
-TILE = (320, 180) if MOBILE else (480, 270)
+TILE = (480, 270)
 COLUMNS, ROWS = 4, 3
 PER_SHEET = COLUMNS * ROWS
 
@@ -24,7 +24,7 @@ for start in range(0, len(frames), PER_SHEET):
         with Image.open(path) as original:
             frame = original.resize(TILE, Image.Resampling.LANCZOS)
             sheet.paste(frame, ((offset % COLUMNS) * TILE[0], (offset // COLUMNS) * TILE[1]))
-    sheet.save(TARGET / f'sheet-{start // PER_SHEET + 1:02d}.webp', 'WEBP', quality=65, method=4)
+    sheet.save(TARGET / f'sheet-{start // PER_SHEET + 1:02d}.webp', 'WEBP', quality=78 if MOBILE else 65, method=4)
 
 expected = (len(frames) + PER_SHEET - 1) // PER_SHEET
 for stale in TARGET.glob('sheet-*.webp'):
