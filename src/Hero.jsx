@@ -7,7 +7,9 @@ const FRAMES_PER_SHEET = 12;
 const SHEET_COUNT = LAST_FRAME / FRAMES_PER_SHEET;
 const WALKTHROUGH_END = .82;
 const sheetUrl = (index, compact) => `/${compact ? 'sprite-mobile' : 'sprite'}/sheet-${String(index + 1).padStart(2, '0')}.webp`;
-const frameUrl = (number, compact) => `/${compact ? 'sequence-mobile' : 'sequence'}/frame-${String(number).padStart(3, '0')}.webp`;
+const frameUrl = (number, compact) => compact
+  ? `/sequence-mobile/frame-${String(number).padStart(3, '0')}.webp`
+  : `/frames/ezgif-frame-${String(number).padStart(3, '0')}.jpg`;
 
 export default function Hero({onComplete}) {
   const root = useRef(null), canvas = useRef(null), progress = useRef(null);
@@ -28,8 +30,8 @@ export default function Hero({onComplete}) {
     const sheetPending = new Set(), sheetFailed = new Set(), detailPending = new Set(), detailFailed = new Set();
     const tileWidth = compact ? 320 : 480, tileHeight = compact ? 180 : 270;
     const ctx = canvas.current.getContext('2d', {alpha: false, desynchronized: true});
-    let alive = true, raf = 0, idleTimer = 0, target = reduced ? LAST_FRAME : 1;
-    let sheetInFlight = 0, detailInFlight = 0, scrolling = false;
+    let alive = true, raf = 0, target = reduced ? LAST_FRAME : 1, direction = 1, active = true;
+    let sheetInFlight = 0, detailInFlight = 0;
     let lastRender = '', finished = false;
 
     setStatus('Preparing the walkthrough…');
@@ -63,8 +65,16 @@ export default function Hero({onComplete}) {
         if (distance) loadSheet(focus - distance);
       }
     };
+    const trimDetail = () => {
+      const removable = [...detail.keys()].filter(number => number !== target)
+        .sort((a, b) => Math.abs(b - target) - Math.abs(a - target));
+      while (detail.size > 18 && removable.length) {
+        const number = removable.shift();
+        detail.get(number).close(); detail.delete(number);
+      }
+    };
     const loadDetail = number => {
-      if (detail.has(number) || detailPending.has(number) || detailFailed.has(number) || detailInFlight >= 2) return;
+      if (number < 1 || number > LAST_FRAME || detail.has(number) || detailPending.has(number) || detailFailed.has(number) || detailInFlight >= 3) return;
       detailPending.add(number); detailInFlight++;
       const image = new Image();
       image.decoding = 'async';
@@ -73,10 +83,7 @@ export default function Hero({onComplete}) {
           const bitmap = await createImageBitmap(image);
           if (!alive) { bitmap.close(); return; }
           detail.set(number, bitmap);
-          while (detail.size > 4) {
-            const stale = detail.keys().next().value;
-            detail.get(stale).close(); detail.delete(stale);
-          }
+          trimDetail();
           if (reduced) setStatus('');
           schedule();
         } catch {
@@ -84,30 +91,39 @@ export default function Hero({onComplete}) {
           if (reduced) setStatus('Walkthrough unavailable. Use Menu to continue.');
         } finally {
           detailPending.delete(number); detailInFlight--;
-          if (alive && !scrolling && !detail.has(target)) loadDetail(target);
+          queueDetails();
         }
       };
       image.onerror = () => {
         detailFailed.add(number);
         detailPending.delete(number); detailInFlight--;
         if (reduced) setStatus('Walkthrough unavailable. Use Menu to continue.');
+        queueDetails();
       };
       image.src = frameUrl(number, compact);
+    };
+    const queueDetails = () => {
+      if (!alive || document.hidden || !active) return;
+      if (reduced) { loadDetail(LAST_FRAME); return; }
+      loadDetail(target);
+      for (let step = 1; step <= 12 && detailInFlight < 3; step++) {
+        loadDetail(target + direction * step);
+        if (step <= 3) loadDetail(target - direction * step);
+      }
     };
     const readProgress = () => {
       const section = root.current;
       if (!section) return;
+      const rect = section.getBoundingClientRect();
+      active = rect.bottom > 0 && rect.top < innerHeight;
       const distance = Math.max(1, section.offsetHeight - innerHeight);
-      const position = Math.max(0, Math.min(1, -section.getBoundingClientRect().top / distance));
-      target = reduced ? LAST_FRAME : Math.round(Math.min(1, position / WALKTHROUGH_END) * (LAST_FRAME - 1)) + 1;
+      const position = Math.max(0, Math.min(1, -rect.top / distance));
+      const next = reduced ? LAST_FRAME : Math.round(Math.min(1, position / WALKTHROUGH_END) * (LAST_FRAME - 1)) + 1;
+      direction = next >= target ? 1 : -1;
+      target = next;
       progress.current.style.transform = `scaleX(${Math.min(1, position / WALKTHROUGH_END)})`;
-      if (reduced) loadDetail(LAST_FRAME);
-      else {
-        scrolling = true;
-        queueSheets();
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(() => { scrolling = false; loadDetail(target); schedule(); }, 150);
-      }
+      queueSheets();
+      queueDetails();
       schedule();
     };
     const draw = () => {
@@ -119,7 +135,7 @@ export default function Hero({onComplete}) {
       }
       const sheetIndex = Math.floor((target - 1) / FRAMES_PER_SHEET);
       const sheet = sheets.get(sheetIndex), sharp = detail.get(target);
-      const useSharp = sharp && (!scrolling || !sheet);
+      const useSharp = Boolean(sharp);
       const ready = Boolean(useSharp || sheet);
       const done = target === LAST_FRAME && ready;
       if (done !== finished) { finished = done; setComplete(done); onComplete(done); }
@@ -143,15 +159,16 @@ export default function Hero({onComplete}) {
 
     window.addEventListener('scroll', readProgress, {passive: true});
     window.addEventListener('resize', readProgress, {passive: true});
-    document.addEventListener('visibilitychange', queueSheets);
+    const resume = () => { queueSheets(); queueDetails(); };
+    document.addEventListener('visibilitychange', resume);
     queueSheets();
     readProgress();
     return () => {
       alive = false;
       window.removeEventListener('scroll', readProgress);
       window.removeEventListener('resize', readProgress);
-      document.removeEventListener('visibilitychange', queueSheets);
-      clearTimeout(idleTimer); cancelAnimationFrame(raf);
+      document.removeEventListener('visibilitychange', resume);
+      cancelAnimationFrame(raf);
       sheets.forEach(bitmap => bitmap.close());
       detail.forEach(bitmap => bitmap.close());
     };
