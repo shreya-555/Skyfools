@@ -56,7 +56,7 @@ export default function Hero({onComplete}) {
         // Keep the last painted frame visible while the requested HD frame loads.
         if (element.width !== width || element.height !== height) { element.width = width; element.height = height; }
         const sw = source.naturalWidth || source.width, sh = source.naturalHeight || source.height;
-        const scale = (compactQuery.matches ? Math.max : Math.min)(width / sw, height / sh);
+        const scale = Math.max(width / sw, height / sh);
         const dw = sw * scale, dh = sh * scale;
         ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
         ctx.fillStyle = '#27271f'; ctx.fillRect(0, 0, width, height);

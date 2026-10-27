@@ -135,6 +135,6 @@ footer{padding:46px 4% 28px}
 }
 .hero-progress{width:100%;transform:scaleX(0);transform-origin:left center;will-change:transform}
 .hero{height:100svh;touch-action:pan-y pinch-zoom}
-.hero-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.hero-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero canvas{opacity:0}
 @media(max-width:700px){.hero-poster{object-fit:cover}}
