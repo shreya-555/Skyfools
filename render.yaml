@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: skyfools
+    runtime: static
+    repo: https://github.com/soham-2135/Skyfools
+    branch: fix/mobile-scroll-animation
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
