@@ -1,8 +1,9 @@
 {
-  "count": 300,
+  "count": 604,
   "width": 1920,
   "height": 1080,
-  "path": "/walkthrough-hd",
+  "path": "/walkthrough-60fps",
   "extension": "jpg",
-  "version": "soham-original-v1"
+  "version": "ac23fc750dc6",
+  "sourceFps": 60.0
 }

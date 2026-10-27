@@ -6,7 +6,7 @@ function harness() {
   const requests = [];
   let changes = 0;
   const loader = createFrameLoader({
-    urlForFrame: n => `frame-${n}.jpg`, lastFrame: 300,
+    urlForFrame: n => `frame-${n}.jpg`, lastFrame: 604,
     getSettings: () => ({concurrency: 3, cacheLimit: 6, offsets: [0, 2, 5, -2]}),
     onChange: () => changes++,
     createImage: () => {
@@ -43,7 +43,7 @@ test('delayed mobile requests survive continuous swipes and catch up to the late
 
 test('forward and reverse journeys keep decoded images bounded and preloading settles', () => {
   const h = harness();
-  for (const n of [1, 25, 80, 160, 240, 300, 200, 90, 1]) {
+  for (const n of [1, 25, 80, 160, 240, 300, 480, 604, 200, 90, 1]) {
     h.loader.request(n, n < 200 ? -1 : 1);
     h.flush();
     assert.equal(h.loader.nearest().number, n);

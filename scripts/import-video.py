@@ -1,46 +1,74 @@
-"""Import native HD frames: python scripts/import-video.py video.mp4 or frames.zip."""
+"""Import native HD frames: python scripts/import-video.py video.mp4 [--output public/sequence]."""
+import argparse
+from fractions import Fraction
+import hashlib
 import json
 from pathlib import Path
-import subprocess
-import sys
-from zipfile import ZipFile
 import re
+import shutil
+import subprocess
+from tempfile import TemporaryDirectory
+from zipfile import ZipFile
 from PIL import Image
 
-source = Path(sys.argv[1]).resolve()
-target = Path('public/walkthrough-hd')
-target.mkdir(parents=True, exist_ok=True)
-if source.suffix.lower() == '.zip':
-    with ZipFile(source) as archive:
-        originals = {}
-        for name in archive.namelist():
-            match = re.fullmatch(r'ezgif-frame-(\d+)\.jpg', Path(name).name, re.I)
-            if match:
-                originals[int(match[1])] = name
-        if not originals or sorted(originals) != list(range(1, len(originals) + 1)):
-            raise SystemExit('ZIP must contain a complete numbered JPG sequence.')
-        for number, name in sorted(originals.items()):
-            (target / f'frame-{number:03}.jpg').write_bytes(archive.read(name))
-    extension = 'jpg'
-    count = len(originals)
-    with Image.open(target / 'frame-001.jpg') as image:
-        probe = {'width': image.width, 'height': image.height}
-else:
-    probe = json.loads(subprocess.check_output([
-        'ffprobe', '-v', 'error', '-select_streams', 'v:0',
-        '-show_entries', 'stream=width,height', '-of', 'json', str(source)
-    ]))['streams'][0]
-    subprocess.run([
-        'ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', str(source),
-        '-an', '-vf', 'fps=24', '-c:v', 'libwebp', '-quality', '84',
-        '-compression_level', '4', '-threads', '2',
-        str(target / 'frame-%03d.webp')
-    ], check=True)
-    extension = 'webp'
-    count = len(list(target.glob('frame-*.webp')))
-frames = [target / f'frame-{n:03}.{extension}' for n in range(1, count + 1)]
-metadata = {'count': len(frames), 'width': probe['width'], 'height': probe['height'],
-            'path': '/walkthrough-hd', 'extension': extension, 'version': 'soham-original-v1'}
-Path('src/walkthrough.json').write_text(json.dumps(metadata, indent=2) + '\n')
-print(f"Extracted {len(frames)} native {probe['width']}x{probe['height']} frames "
-      f"({sum(frame.stat().st_size for frame in frames) / 1024**2:.1f} MB)")
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('source', type=Path)
+parser.add_argument('--output', type=Path, default=Path('public/walkthrough-hd'))
+args = parser.parse_args()
+source = args.source.resolve()
+target = args.output.resolve()
+public = Path('public').resolve()
+if not target.is_relative_to(public) or target == public:
+    raise SystemExit('Output must be a sequence directory inside public/.')
+with source.open('rb') as file:
+    version = hashlib.file_digest(file, 'sha256').hexdigest()[:12]
+
+with TemporaryDirectory(prefix='.walkthrough-import-', dir=public) as temporary:
+    staging = Path(temporary)
+    if not staging.resolve().is_relative_to(public):
+        raise SystemExit('Unexpected staging directory outside public/.')
+    fps = None
+    if source.suffix.lower() == '.zip':
+        with ZipFile(source) as archive:
+            originals = {}
+            for name in archive.namelist():
+                match = re.fullmatch(r'ezgif-frame-(\d+)\.jpg', Path(name).name, re.I)
+                if match:
+                    originals[int(match[1])] = name
+            if not originals or sorted(originals) != list(range(1, len(originals) + 1)):
+                raise SystemExit('ZIP must contain a complete numbered JPG sequence.')
+            for number, name in sorted(originals.items()):
+                (staging / f'frame-{number:03}.jpg').write_bytes(archive.read(name))
+    else:
+        stream = json.loads(subprocess.check_output([
+            'ffprobe', '-v', 'error', '-select_streams', 'v:0',
+            '-show_entries', 'stream=width,height,r_frame_rate', '-of', 'json', str(source)
+        ]))['streams'][0]
+        fps = float(Fraction(stream['r_frame_rate']))
+        # Extract every source frame, retaining native dimensions and timing.
+        # JPEG uses the same native Image decoding path on Safari and desktop.
+        subprocess.run([
+            'ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', str(source),
+            '-map', '0:v:0', '-an', '-fps_mode', 'passthrough', '-q:v', '3', '-threads', '2',
+            str(staging / 'frame-%03d.jpg')
+        ], check=True)
+    frames = sorted(staging.glob('frame-*.jpg'))
+    if not frames:
+        raise SystemExit('No frames were extracted.')
+    with Image.open(frames[0]) as image:
+        width, height = image.size
+    for frame in frames:
+        with Image.open(frame) as image:
+            if image.size != (width, height):
+                raise SystemExit(f'Unexpected dimensions: {frame.name}')
+    target.mkdir(parents=True, exist_ok=True)
+    for frame in frames:
+        shutil.copyfile(frame, target / frame.name)
+    metadata = {'count': len(frames), 'width': width, 'height': height,
+                'path': '/' + target.relative_to(public).as_posix(),
+                'extension': 'jpg', 'version': version}
+    if fps:
+        metadata['sourceFps'] = fps
+    Path('src/walkthrough.json').write_text(json.dumps(metadata, indent=2) + '\n')
+    size = sum(frame.stat().st_size for frame in frames) / 1024**2
+    print(f'Imported {len(frames)} native {width}x{height} frames ({size:.1f} MB), source fps: {fps}')
