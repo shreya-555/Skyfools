@@ -1,9 +1,8 @@
 {
-  "count": 604,
+  "count": 30,
   "width": 1920,
   "height": 1080,
-  "path": "/walkthrough-60fps",
-  "extension": "jpg",
-  "version": "ac23fc750dc6",
-  "sourceFps": 60.0
+  "path": "/walkthrough-30frames",
+  "extension": "webp",
+  "version": "7d44959bcc94"
 }
